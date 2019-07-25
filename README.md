@@ -9,6 +9,9 @@
 host = "hostname"
 client_secret = "client secret password"
 client_id = "token"
+token_endpoint = "/<SuiteCRM_Install_Directory>/Api/access_token"
+get_endpoint = "/<SuiteCRM_Install_Directory>/Api/V8/module/"
+post_endpoint = "/<SuiteCRM_Install_Directory>/Api/V8/module"
 ```
 
 **I will be adding my CSV parser for importing SF data into SCRM in a few days**
