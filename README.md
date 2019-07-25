@@ -11,4 +11,4 @@ client_secret = "client secret password"
 client_id = "token"
 ```
 
-*** I will be adding my CSV parser for importing SF data into SCRM in a few days ***
+**I will be adding my CSV parser for importing SF data into SCRM in a few days**
