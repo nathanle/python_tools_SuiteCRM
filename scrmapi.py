@@ -30,7 +30,7 @@ def get_token(token_file):
     headers = {
         'Content-type': 'application/vnd.api+json',
         'Accept': 'application/vnd.api+json', }
-    conn.request("POST", "/CCCRM/Api/access_token", json_payload, headers)
+    conn.request("POST", secrets.token_endpoint, json_payload, headers)
     conn.set_debuglevel(1)
     res = conn.getresponse()
     data = res.read()
@@ -75,7 +75,7 @@ def get_data(rqtype):
     if (rqtype == "Properties"):
         params = urlencode({'fields[props_Properties]': 'name,account_type'})
         name = "props_Properties"
-    endpoint = "/CCCRM/Api/V8/module/" + name
+    endpoint = secrets.get_endpoint + name
     conn = http.client.HTTPSConnection(host)
     headers = {
         'Content-type': 'application/vnd.api+json',
@@ -99,7 +99,7 @@ def add_data(data):
         'Accept': 'application/vnd.api+json',
         'Authorization': "Bearer " + token
     }
-    conn.request("POST", "/CCCRM/Api/V8/module", payload, headers)
+    conn.request("POST", secrets.post_endpoint, payload, headers)
     res = conn.getresponse()
     data = res.read()
     decode = json.loads((data.decode("utf-8")))
