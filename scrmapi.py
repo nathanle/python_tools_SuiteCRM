@@ -10,7 +10,7 @@ import secrets
 
 # OAUTH2.0 TOOL
 # Evaluates remaining life left on token and rerequests when token as expired
-# Designed for SuiteCRM by Nathan LeSueur
+# Designed for SuiteCRM
 
 tm = int(time.time())
 host = secrets.host
@@ -21,7 +21,6 @@ def get_token(token_file):
     conn = http.client.HTTPSConnection(host)
     payload = {
         'grant_type': 'client_credentials',
-        #'client_id': '4ee91ba2-c8e3-633a-408a-5c7d88de671c',
         'client_id': secrets.client_id,
         'client_secret': secrets.client_secret,
         'scope=standard': 'create standard:read standard:update standard:delete standard:delete standard:relationship:create standard:relationship:read standard:relationship:update standard:relationship:delete'
@@ -30,7 +29,7 @@ def get_token(token_file):
     headers = {
         'Content-type': 'application/vnd.api+json',
         'Accept': 'application/vnd.api+json', }
-    conn.request("POST", secrets.token_endpoint, json_payload, headers)
+    conn.request("POST", "/CCCRM/Api/access_token", json_payload, headers)
     conn.set_debuglevel(1)
     res = conn.getresponse()
     data = res.read()
@@ -54,6 +53,7 @@ def open_token(token_file):
 
 expires_in = 3599
 json_data = open_token(token_file)
+#print(json_data)
 if (json_data == "failed"):
     get_token(token_file)
     json_data = open_token(token_file)
@@ -61,7 +61,9 @@ issued_int = int(json_data["issued_at"])  # epoch time bearer token was issued
 if ((tm-issued_int) > expires_in):
     get_token(token_file)
     json_data = open_token(token_file)
+#    print("Token refreshed.")
 token = json_data["access_token"]
+#print(token)
 
 ##############################################
 # END OF TOKEN MANAGEMENT                    #
@@ -75,7 +77,7 @@ def get_data(rqtype):
     if (rqtype == "Properties"):
         params = urlencode({'fields[props_Properties]': 'name,account_type'})
         name = "props_Properties"
-    endpoint = secrets.get_endpoint + name
+    endpoint = "/CCCRM/Api/V8/module/" + name
     conn = http.client.HTTPSConnection(host)
     headers = {
         'Content-type': 'application/vnd.api+json',
@@ -99,7 +101,7 @@ def add_data(data):
         'Accept': 'application/vnd.api+json',
         'Authorization': "Bearer " + token
     }
-    conn.request("POST", secrets.post_endpoint, payload, headers)
+    conn.request("POST", "/CCCRM/Api/V8/module", payload, headers)
     res = conn.getresponse()
     data = res.read()
     decode = json.loads((data.decode("utf-8")))
@@ -107,7 +109,43 @@ def add_data(data):
         json.dump(decode, outfile, indent=4, ensure_ascii=False)
     conn.close()
     return decode
+def patch(data):
+    conn = http.client.HTTPSConnection(host)
+    payload = json.dumps(data)
+    print(json.dumps(data, indent=4))
+    headers = {
+        'Content-type': 'application/vnd.api+json',
+        'Accept': 'application/vnd.api+json',
+        'Authorization': "Bearer " + token
+    }
 
+    conn.request("PATCH", "/CCCRM/Api/V8/module", payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    decode = json.loads((data.decode("utf-8")))
+    with open('patchproperties.log', 'a') as outfile:
+        json.dump(decode, outfile, indent=4, ensure_ascii=False)
+    conn.close()
+    return decode
+def add_relationship(modulename, parentid, data):
+    conn = http.client.HTTPSConnection(host)
+    payload = json.dumps(data)
+    print(json.dumps(data, indent=4))
+    headers = {
+        'Content-type': 'application/vnd.api+json',
+        'Accept': 'application/vnd.api+json',
+        'Authorization': "Bearer " + token
+    }
+    conn.request("POST", "/CCCRM/Api/V8/module/{0}/{1}/relationships".format(modulename, parentid), payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    decode = json.loads((data.decode("utf-8")))
+    with open('create_relationships.log', 'a') as outfile:
+        json.dump(decode, outfile, indent=4, ensure_ascii=False)
+    conn.close()
+    return decode
 
 if __name__ == "__main__":
     print(get_data("Accounts"))
+# create_account(json_data["access_token"])
+# create_properties()
