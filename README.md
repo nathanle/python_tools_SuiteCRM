@@ -11,6 +11,7 @@ It requires a secrets.py file with the following:
 #!/usr/local/bin/python3 #Or whatever your python3 path is.
 
 host = "hostname"
+base = "URL base of API endpoint" # example "/rootpathofsuitecrminstall"
 client_secret = "client secret password"
 client_id = "token"
 token_endpoint = "/<SuiteCRM_Install_Directory>/Api/access_token"
