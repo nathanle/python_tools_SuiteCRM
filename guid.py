@@ -6,8 +6,7 @@ import struct
 from datetime import datetime
 
 # This is a Python replacement for the guid.php file that comes with suiteCRM. This is meant to be
-# used as a module, called with "import guid", and referenced with "guid.result".
-# Created by: Nathan LeSueur
+# used as a module, import with "import guid", and call with  "guid.get_id()".
 
 
 def rand_num(num):
