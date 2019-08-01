@@ -26,10 +26,11 @@ def get_token(token_file):
         'scope=standard': 'create standard:read standard:update standard:delete standard:delete standard:relationship:create standard:relationship:read standard:relationship:update standard:relationship:delete'
     }
     json_payload = json.dumps(payload)
+    endpoint = secrets.base + "/Api/access_token"
     headers = {
         'Content-type': 'application/vnd.api+json',
         'Accept': 'application/vnd.api+json', }
-    conn.request("POST", "/CCCRM/Api/access_token", json_payload, headers)
+    conn.request("POST", endpoint, json_payload, headers)
     conn.set_debuglevel(1)
     res = conn.getresponse()
     data = res.read()
@@ -77,7 +78,7 @@ def get_data(rqtype):
     if (rqtype == "Properties"):
         params = urlencode({'fields[props_Properties]': 'name,account_type'})
         name = "props_Properties"
-    endpoint = "/CCCRM/Api/V8/module/" + name
+    endpoint = secrets.base + "/Api/V8/module/" + name
     conn = http.client.HTTPSConnection(host)
     headers = {
         'Content-type': 'application/vnd.api+json',
@@ -95,13 +96,14 @@ def get_data(rqtype):
 def add_data(data):
     conn = http.client.HTTPSConnection(host)
     payload = json.dumps(data)
+    endpoint = secrets.base + "/Api/V8/module"
     print(json.dumps(data, indent=4))
     headers = {
         'Content-type': 'application/vnd.api+json',
         'Accept': 'application/vnd.api+json',
         'Authorization': "Bearer " + token
     }
-    conn.request("POST", "/CCCRM/Api/V8/module", payload, headers)
+    conn.request("POST", endpoint, payload, headers)
     res = conn.getresponse()
     data = res.read()
     decode = json.loads((data.decode("utf-8")))
@@ -112,6 +114,7 @@ def add_data(data):
 def patch(data):
     conn = http.client.HTTPSConnection(host)
     payload = json.dumps(data)
+    endpoint = secrets.base + "/Api/V8/module"
     print(json.dumps(data, indent=4))
     headers = {
         'Content-type': 'application/vnd.api+json',
@@ -119,7 +122,7 @@ def patch(data):
         'Authorization': "Bearer " + token
     }
 
-    conn.request("PATCH", "/CCCRM/Api/V8/module", payload, headers)
+    conn.request("PATCH", endpoint, payload, headers)
     res = conn.getresponse()
     data = res.read()
     decode = json.loads((data.decode("utf-8")))
@@ -130,13 +133,14 @@ def patch(data):
 def add_relationship(modulename, parentid, data):
     conn = http.client.HTTPSConnection(host)
     payload = json.dumps(data)
+    endpoint = secrets.base + "/Api/V8/module/{0}/{1}/relationships".format(modulename, parentid)
     print(json.dumps(data, indent=4))
     headers = {
         'Content-type': 'application/vnd.api+json',
         'Accept': 'application/vnd.api+json',
         'Authorization': "Bearer " + token
     }
-    conn.request("POST", "/CCCRM/Api/V8/module/{0}/{1}/relationships".format(modulename, parentid), payload, headers)
+    conn.request("POST", endpoint, payload, headers)
     res = conn.getresponse()
     data = res.read()
     decode = json.loads((data.decode("utf-8")))
