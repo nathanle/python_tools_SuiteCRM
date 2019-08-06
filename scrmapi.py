@@ -1,8 +1,6 @@
 #!/usr/local/bin/python3
-import http.client
 import requests
 import os.path
-from urllib.parse import urlencode
 import json
 import time
 import sys
