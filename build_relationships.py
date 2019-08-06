@@ -1,17 +1,10 @@
 #!/usr/local/bin/python3
-import pandas as pd
-import numpy as np
-import re
-import json
 import sys
-import csv
 import datetime
 import argparse 
-import struct
 import pymysql 
 import secrets
 import guid
-import unicodedata
 import scrmapi
 from threading import Thread
 
